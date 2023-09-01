@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ my_title }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='./styles/style.css') }}">
+</head>
+<body>
+  <div class="wrapper">
+    {% block navbar %}
+    {% include '_navbar.html' %}
+    {% endblock %}
+    <section class="content">
+      <div class="container">
+        {% block content %}
+        <!-- Flash -->
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+          <ul class="flash__wrapper">
+            {% for message in messages %}
+            <li class="flash__message">{{ message }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        {% endwith %}
+        <!-- ======= -->
+        <div class="content__inner">
+          {% block subcontent %}
+          {% endblock %}
+        </div>
+      {% endblock %}
+      </div>
+    </section>
+    <footer class="footer">
+      <div class="container">
+        <div class="footer__wrapper">
+
+          <div class="footer__top">
+            <ul class="footer__navbar-items">
+              <li class="footer__navbar-item">
+                <a href="{{ url_for('index') }}" class="footer__navbar-item-link">Home</a>
+              </li>
+              <li class="footer__navbar-item">
+                <a href="{{ url_for('about') }}" class="footer__navbar-item-link">About Me</a>
+              </li>
+              <li class="footer__navbar-item">
+                <a href="{{ url_for('register') }}" class="footer__navbar-item-link">Registration</a>
+              </li>
+              {% if session.username %}
+              <li class="footer__navbar-item">
+                <a class="footer__navbar-item-link" href="{{ url_for('logout') }}">Logout</a>
+              </li>
+              {% else %}
+              <li class="footer__navbar-item">
+                <a class="footer__navbar-item-link" href="{{ url_for('login') }}">Login</a>
+              </li>
+              {% endif %}
+            </ul>
+            <div class="footer__inner">
+              <div class="footer__contact">
+                <p class="footer__contact-content">If you'd like to talk about a project you want help with or need an advice about product design, just drop me a message at <a class="footer__contact-info" href="mailto:makarevichandco@gmail.com">makarevichandco@gmail.com</a>.
+                  I'm currently Available for any design systems projects, dashboard designs or landing pages gigs.</p>
+                  <a class="footer__contact-button" href="mailto:makarevichandco@gmail.com"><span class="button-hover"></span>Write Me An Email</a>
+              </div>
+              <h3 class="footer__contact-heading">Follow Me</h3>
+            </div>
+          </div>
+
+          <div class="footer__copyright">
+            <p class="footer__copyright-text">Built From Scratch By Me :)</p>
+            <p class="footer__copyright-text">Copyright © 2023 Andrei Makarevich. All rights reserved</p>
+          </div>
+
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block subcontent %}
+<h1 class="form__title">User Registration</h1>
+<div class="form__inner">
+  <form class="form__inner-inputs" method="POST" action="/register/">
+    <div class="form__wrapper">
+      <label class="form__wrapper-title" for="firstname">First Name</label>
+      <input class="form__wrapper-input" type="text" placeholder="First Name" id="firstname" name="firstname">
+    </div>
+    <div class="form__wrapper">
+      <label class="form__wrapper-title" for="lastname">Last Name</label>
+      <input class="form__wrapper-input" type="text" placeholder="Last Name" id="lastname" name="lastname">
+    </div>
+    <div class="form__wrapper">
+      <label class="form__wrapper-title" for="username">Username</label>
+      <input class="form__wrapper-input" type="text" placeholder="Username" id="username" name="username">
+    </div>
+    <div class="form__wrapper">
+      <label class="form__wrapper-title" for="email">Email Address</label>
+      <input class="form__wrapper-input" type="email" placeholder="Enter Email" id="email" name="email">
+    </div>
+    <div class="form__wrapper">
+      <label class="form__wrapper-title" for="password">Enter Password</label>
+      <input class="form__wrapper-input" type="password" placeholder="Enter Password" id="password" name="password">
+    </div>
+    <div class="form__wrapper">
+      <label class="form__wrapper-title" for="confirm__password">Confirm Password</label>
+      <input class="form__wrapper-input" type="password" placeholder="Confirm Password" id="confirm__password" name="confirm__password">
+    </div>
+    <button class="form__wrapper-button" type="submit">Register</button>
+  </form>
+  <div class="form__register-wrapper">
+    <p class="form__text">Already have an account?</p>
+    <a class="form__link" href="{{ url_for('login') }}">Sign In</a>
+  </div>
+</div>
+{% endblock %}

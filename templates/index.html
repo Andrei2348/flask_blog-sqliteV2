@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block subcontent %}
+<h1 class="content__title">This Is Page Of Posts</h1>
+{% if blogs %}
+  {% for blog in blogs %}
+  <div class="content__blog-wrapper">
+    <div class="content__subtitle-wrapper">
+      <h3 class="content__subtitle">{{ blog.title }}</h3>
+    </div>
+    <div class="content__text-wrapper">
+      <p class="content__text">{{ blog.body[:200] }}...
+        <a class="content__text-link" href="{{ url_for('blogs', id = blog.blog_id) }}">read more...</a>
+      </p>
+      <div class="content__info">
+        <p class="content__text">Written by {{ blog.author }}</p>
+        <p class="content__text-datetime">{{ blog.datetime }}</p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <p class="content__title">No Blogs Have Been Written Yet</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block subcontent %}
+<h1 class="form__title">User Login</h1>
+<div class="form__inner">
+  <form class="form__inner-inputs" method="POST" action="/login/">
+    <div class="form__wrapper">
+      <label class="form__wrapper-title" for="username">Username</label>
+      <input class="form__wrapper-input" type="text" placeholder="Username" id="username" name="username">
+    </div>
+    <div class="form__wrapper">
+      <label class="form__wrapper-title" for="password">Enter Password</label>
+      <input class="form__wrapper-input" type="password" placeholder="Enter Password" id="password" name="password">
+    </div>
+    <button class="form__wrapper-button" type="submit">Sign Up Now</button>
+  </form>
+  <div class="form__register-wrapper">
+    <p class="form__text">Dont't have an account?</p>
+    <a class="form__link" href="{{ url_for('register') }}">Register</a>
+  </div>
+</div>
+{% endblock %}

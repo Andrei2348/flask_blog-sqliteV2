@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block subcontent %}
+<h1 class="form__title">Edit Post</h1>
+<div class="form__inner">
+  <form class="form__inner-inputs" method="POST" action="/edit-blog/{{blog.blog_id}}">
+    <div class="form__wrapper">
+      <label class="form__wrapper-title" for="title">Title</label>
+      <input class="form__wrapper-input" type="text" id="title" name="title" value = "{{ blog.title }}">
+    </div>
+    <div class="form__wrapper">
+      <label class="form__wrapper-title" for="body">Content</label>
+      <textarea class="form__wrapper-area" type="text" id="body" name="body" wrap="on" cols="30" rows="12">{{ blog.body }}</textarea>
+    </div>
+    <button class="form__wrapper-button" type="submit">Edit Post</button>
+  </form>
+</div>
+{% endblock %}
