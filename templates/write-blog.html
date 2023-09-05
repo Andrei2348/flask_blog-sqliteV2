@@ -5,11 +5,11 @@
   <form class="form__inner-inputs" method="POST" action="/write-blog/">
     <div class="form__wrapper">
       <label class="form__wrapper-title" for="title">Title</label>
-      <input class="form__wrapper-input" type="text" placeholder="Enter a Title" id="title" name="title">
+      <input class="form__wrapper-input" type="text" placeholder="Enter a Title" id="title" name="title" required>
     </div>
     <div class="form__wrapper">
       <label class="form__wrapper-title" for="body">Content</label>
-      <textarea class="form__wrapper-area" type="text" id="body" name="body" wrap="on" cols="30" rows="7"></textarea>
+      <textarea class="form__wrapper-area" type="text" id="body" name="body" wrap="on" cols="30" rows="7" required></textarea>
     </div>
     <button class="form__wrapper-button" type="submit">Write</button>
   </form>

@@ -1,13 +1,10 @@
 from flask import Flask, render_template, flash, session, request, redirect, url_for
-import hashlib
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import sqlite3
 import create_table
 import datetime
 
-
-def md5sum(value):
-  return hashlib.md5(value.encode()).hexdigest()
 
 app = Flask(__name__)
 create_table.create_table()
@@ -23,7 +20,7 @@ def close_database(cursor, db):
   db.close()
 
 
-# Index Page
+# Главная страница сайта
 @app.route('/index/')
 @app.route('/')
 def index():
@@ -38,13 +35,13 @@ def index():
     return render_template('index.html', blogs = blogs, my_title = 'My Blog')
   
 
-# About Page
+# Страница сайта About
 @app.route('/about/')
 def about():
   return render_template('about.html', my_title = 'About')
 
 
-# Blogs
+# Вывод выбранного поста (Blogs)
 @app.route('/blogs/<int:id>/')
 def blogs(id):
   cursor, db = connect_database()
@@ -57,24 +54,23 @@ def blogs(id):
     return render_template('blogs.html', blog = blog, my_title = 'Blogs')
 
 
+# Регистрация пользователя
 @app.route('/register/', methods = ['GET', 'POST'])
 def register():
   if request.method == 'POST':
     user_details = request.form
-    values = [user_details['firstname'], 
-              user_details['lastname'], 
-              user_details['username'], 
-              user_details['email'], 
-              user_details['password']]
+    # Сверяем введенный и подтвержденный пароли
     if user_details['password'] != user_details['confirm__password']:
       flash('Passwords do not match! Try again!')
       return render_template('register.html', my_title = 'Registration')
+    values = [user_details['firstname'], 
+              user_details['lastname'], 
+              user_details['username'], 
+              user_details['email'],
+              # Шифрование пароля
+              generate_password_hash(user_details['password'])]
     cursor, db = connect_database()
-
-    # Шифрование пароля
-    db.create_function("md5", 1, md5sum)
-    cursor.execute("""INSERT INTO user(first_name, last_name, username, email, password) 
-                  VALUES (?, ?, ?, ?, md5(?))""", values)
+    cursor.execute("""INSERT INTO user(first_name, last_name, username, email, password) VALUES (?, ?, ?, ?, ?)""", values)
     db.commit()
     close_database(cursor, db)
     flash('Registration Successfull! Please Login')
@@ -82,7 +78,7 @@ def register():
   return render_template('register.html', my_title = 'Registration')
 
 
-# Login
+# Вход в личный кабинет
 @app.route('/login/', methods = ['GET', 'POST'])
 def login():
   if request.method == 'POST':
@@ -90,37 +86,38 @@ def login():
     username = user_details['username']
     password = user_details['password']
     cursor, db = connect_database()
-    db.create_function("md5", 1, md5sum)
-    cursor.execute("SELECT username FROM user WHERE username = ?", [username])
-    if cursor.fetchone() is None:
+    cursor.execute("SELECT * FROM user WHERE username = ?", [username])
+    user = cursor.fetchone()
+    close_database(cursor, db)
+    # Проверка существования пользователя
+    if user is None:
       flash('User Does Not Exist!')
-      return redirect(url_for('register'))
+      return redirect(url_for('login'))
     else:
-      cursor.execute("SELECT * FROM user WHERE username = ? AND password = md5(?)", [username, password])
-      user = cursor.fetchone()
-      if user == None:
+      # Сверка пароля
+      if not check_password_hash(user['password'], password):
         flash("The Password Is Incorrect")
         return redirect(url_for('login'))
       else:
+        # Создание сессии
         session['username'] = user['username']
         session['first_name'] = user['first_name']
         session['last_name'] = user['last_name']
         flash('Welcome ' + session['first_name'] + '! You Have Been Succecessfully Logged In!!!')
-        close_database(cursor, db)
         return redirect(url_for('index'))
   return render_template('login.html', my_title = 'Login')
 
 
-# Write Blog
+# Создание нового поста (write blog)
 @app.route('/write-blog/', methods = ['GET', 'POST'])
 def write_blog():
   if(session):
     if request.method == 'POST':
       blogpost = request.form
       title = blogpost['title']
-      body = blogpost['body']
-      username = session['username']
       author = session['first_name'] + ' ' + session['last_name']
+      username = session['username']
+      body = blogpost['body']
       current_date = datetime.datetime.now()
       current_date_string = current_date.strftime('%d.%m.%y %H:%M:%S')
       cursor, db = connect_database()
@@ -134,7 +131,7 @@ def write_blog():
     return redirect(url_for('login'))
 
 
-# My Blogs
+# Просмотр моих записей постов (my blogs)
 @app.route('/my-blogs/')
 def my_blogs():
   if(session):
@@ -150,7 +147,7 @@ def my_blogs():
   return redirect(url_for('login'))
 
 
-# Edit Blog
+# Редактирование поста (edit blog)
 @app.route('/edit-blog/<int:id>', methods = ['GET', 'POST'])
 def edit_blog(id):
   if(session):
@@ -173,7 +170,7 @@ def edit_blog(id):
   return redirect(url_for('login'))
 
 
-# Delete Blog
+# Удаление поста (delete blog)
 @app.route('/delete-blog/<int:id>')
 def delete_blog(id):
   if(session):
@@ -187,7 +184,7 @@ def delete_blog(id):
     return redirect(url_for('login'))
 
 
-# Logout
+# Выход из личного кабинета (logout)
 @app.route('/logout/')
 def logout():
   if(session):
@@ -197,7 +194,7 @@ def logout():
   return redirect(url_for('login'))
 
 
-# Error page
+# Ошибка 404
 @app.errorhandler(404)
 def page_not_found(error):
   return render_template('404.html', my_title = 'Error')
