@@ -59,6 +59,14 @@ def blogs(id):
 def register():
   if request.method == 'POST':
     user_details = request.form
+    username = user_details['username']
+    # Проверяем существование пользователя с таким же username
+    cursor, db = connect_database()
+    cursor.execute("SELECT username FROM user WHERE username = ?", [username])
+    user = cursor.fetchone()
+    if user is not None:
+      flash('User Is Already Exist!')
+      return redirect(url_for('register'))
     # Сверяем введенный и подтвержденный пароли
     if user_details['password'] != user_details['confirm__password']:
       flash('Passwords do not match! Try again!')
